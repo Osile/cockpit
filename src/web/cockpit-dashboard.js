@@ -61,7 +61,6 @@ function cockpit_action_btn (func, spec) {
                     })));
 
     btn.select = function (a) {
-        console.log ("S %s", a);
         spec.forEach(function (s) {
             if (s.action == a || (a == 'default' && s.is_default)) {
                 direct_btn.text(s.title);
@@ -325,7 +324,7 @@ PageDashboard.prototype = {
     },
 
     add_server: function () {
-        cockpit_popup(null, "#dashboard_add_server_dialog");
+        $('#dashboard_add_server_dialog').modal('show');
     }
 };
 
@@ -366,7 +365,6 @@ PageAddServer.prototype = {
         var me = this;
 
         if (first_visit) {
-            $("#dashboard_add_server_cancel").on('click', $.proxy(this, "cancel"));
             $("#dashboard_add_server_add").on('click', $.proxy(this, "add"));
             $(cockpit_dbus_local_client).on('objectAdded objectRemoved', function (event, object) {
                 if (object.lookup('com.redhat.Cockpit.Machine'))
@@ -377,7 +375,7 @@ PageAddServer.prototype = {
                     me.update ();
             });
         }
-        $("#dashboard_add_server_address").val("");
+        $('#dashboard_add_server_address').val("");
         me.update ();
     },
 
@@ -396,20 +394,15 @@ PageAddServer.prototype = {
                 discovered.append(item);
             }
         }
-        discovered.listview('refresh');
     },
 
     discovered_clicked: function (iface) {
         $("#dashboard_add_server_address").val(iface.Address);
     },
 
-    cancel: function() {
-        $("#dashboard_add_server_dialog").popup('close');
-    },
-
     add: function() {
-        var address = $("#dashboard_add_server_address").val();
-        $("#dashboard_add_server_dialog").popup('close');
+        var address = $('#dashboard_add_server_address').val();
+        $('#dashboard_add_server_dialog').modal('hide');
         cockpit_add_machine (address);
     }
 
